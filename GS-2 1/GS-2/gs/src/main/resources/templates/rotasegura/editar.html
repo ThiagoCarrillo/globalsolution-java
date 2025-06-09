@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{app.edit_safe_route_title} + ' | ' + #{app.title}">Editar Rota Segura | Sistema de Gerenciamento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4285F4;
+            --secondary-color: #34A853;
+            --accent-color: #FBBC05;
+            --danger-color: #EA4335;
+            --light-gray: #f5f7fa;
+            --dark-gray: #2d3748;
+            --text-color: #4a5568;
+            --border-color: #e2e8f0;
+            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1e5799 0%, #207cca 51%, #2989d8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        .form-container {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-medium);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+            animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #FFA000 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+
+        .form-header h1 {
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-body {
+            padding: 40px 30px;
+            background-color: var(--light-gray);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-gray);
+            font-size: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: white;
+            box-shadow: var(--shadow-light);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+            outline: none;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #FFA000 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 17px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(251, 188, 5, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(251, 188, 5, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3f51b5 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 17px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(66, 133, 244, 0.3);
+            margin-top: 15px;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(66, 133, 244, 0.4);
+        }
+
+        .btn-primary i, .btn-secondary i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .form-footer {
+            padding: 20px;
+            background-color: white;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-color);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+            transform: translateX(-3px);
+        }
+
+        .back-link i {
+            margin-right: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .back-link:hover i {
+            transform: translateX(-3px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .form-body {
+                padding: 30px 20px;
+            }
+
+            .form-header {
+                padding: 25px 15px;
+            }
+
+            .form-header h1 {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                background: white;
+            }
+
+            .form-container {
+                border-radius: 12px;
+                max-width: 100%;
+                box-shadow: none;
+            }
+
+            .form-header {
+                border-radius: 12px 12px 0 0;
+            }
+        }
+
+        /* Validação visual */
+        .form-control:invalid:not(:focus):not(:placeholder-shown) {
+            border-color: var(--danger-color);
+        }
+
+        .form-control:invalid:not(:focus):not(:placeholder-shown) + .error-message {
+            display: block;
+        }
+
+        .error-message {
+            display: none;
+            color: var(--danger-color);
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3f51b5 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-light);
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <div class="form-header">
+        <h1><i class="fas fa-route"></i> <span th:text="#{app.edit_safe_route_title}">Editar Rota Segura</span></h1>
+        <p th:text="#{app.edit_safe_route_description}">Atualize os dados da rota segura</p>
+    </div>
+
+    <div class="form-body">
+        <form th:action="@{/api/rotasegura/cadastrar}" th:object="${RotaSeguraDTO}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="info-badge">
+                <i class="fas fa-info-circle"></i>
+                <span th:text="#{app.editing_route}">Editando rota ID:</span>
+                <span th:text="*{id}"></span>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="logradouro"><i class="fas fa-road"></i> <span th:text="#{app.street}">Logradouro</span></label>
+                    <input type="text" class="form-control" id="logradouro"
+                           th:field="*{logradouro}" th:placeholder="#{app.street_placeholder}" placeholder="Ex: Av. Paulista" required
+                           th:attr="data-error=#{app.required_field}">
+                    <div class="error-message" th:text="#{app.required_field}">Por favor, informe o logradouro</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bairro"><i class="fas fa-map-marker-alt"></i> <span th:text="#{app.district}">Bairro</span></label>
+                    <input type="text" class="form-control" id="bairro"
+                           th:field="*{bairro}" th:placeholder="#{app.district_placeholder}" placeholder="Ex: Bela Vista" required
+                           th:attr="data-error=#{app.required_field}">
+                    <div class="error-message" th:text="#{app.required_field}">Por favor, informe o bairro</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cep"><i class="fas fa-mail-bulk"></i> <span th:text="#{app.zipcode}">CEP</span></label>
+                    <input type="text" class="form-control" id="cep"
+                           th:field="*{cep}" th:placeholder="#{app.zipcode_placeholder}" placeholder="Ex: 01311-000" required
+                           pattern="\d{5}-\d{3}"
+                           th:attr="data-error=#{app.zipcode_format}">
+                    <div class="error-message" th:text="#{app.zipcode_format}">Formato: 00000-000</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="numero"><i class="fas fa-hashtag"></i> <span th:text="#{app.number}">Número</span></label>
+                    <input type="text" class="form-control" id="numero"
+                           th:field="*{numero}" th:placeholder="#{app.number_placeholder}" placeholder="Ex: 1000" required
+                           th:attr="data-error=#{app.required_field}">
+                    <div class="error-message" th:text="#{app.required_field}">Por favor, informe o número</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="complemento"><i class="fas fa-building"></i> <span th:text="#{app.complement}">Complemento</span></label>
+                    <input type="text" class="form-control" id="complemento"
+                           th:field="*{complemento}" th:placeholder="#{app.complement_placeholder}" placeholder="Ex: Bloco B, Apt 305">
+                </div>
+
+                <div class="form-group">
+                    <label for="cidade"><i class="fas fa-city"></i> <span th:text="#{app.city}">Cidade</span></label>
+                    <input type="text" class="form-control" id="cidade"
+                           th:field="*{cidade}" th:placeholder="#{app.city_placeholder}" placeholder="Ex: São Paulo" required
+                           th:attr="data-error=#{app.required_field}">
+                    <div class="error-message" th:text="#{app.required_field}">Por favor, informe a cidade</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="uf"><i class="fas fa-flag"></i> <span th:text="#{app.state}">UF</span></label>
+                    <input type="text" class="form-control" id="uf"
+                           th:field="*{uf}" th:placeholder="#{app.state_placeholder}" placeholder="Ex: SP" maxlength="2" required
+                           pattern="[A-Za-z]{2}"
+                           th:attr="data-error=#{app.state_format}">
+                    <div class="error-message" th:text="#{app.state_format}">Informe a sigla com 2 letras</div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-save"></i> <span th:text="#{app.update_route}">Atualizar Rota</span>
+            </button>
+
+            <a th:href="@{/api/rotasegura/listar}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> <span th:text="#{app.back_to_list}">Voltar para a Lista</span>
+            </a>
+        </form>
+    </div>
+
+    <div class="form-footer" th:text="#{app.footer_system}">
+        &copy; 2025 Sistema de Gerenciamento. Todos os direitos reservados.
+    </div>
+</div>
+
+<script>
+    // Validação em tempo real para CEP
+    document.getElementById('cep').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 5) {
+            value = value.substring(0, 5) + '-' + value.substring(5, 8);
+        }
+        e.target.value = value;
+    });
+
+    // Validação em tempo real para UF (maiúsculas)
+    document.getElementById('uf').addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+    });
+
+    // Validação ao enviar o formulário
+    document.querySelector('form').addEventListener('submit', function(e) {
+        let isValid = true;
+        const requiredFields = this.querySelectorAll('[required]');
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('invalid');
+                alert(field.getAttribute('data-error'));
+                isValid = false;
+            } else {
+                // Verificar padrão se houver
+                if (field.pattern) {
+                    const regex = new RegExp(field.pattern);
+                    if (!regex.test(field.value)) {
+                        field.classList.add('invalid');
+                        alert(field.getAttribute('data-error'));
+                        isValid = false;
+                    } else {
+                        field.classList.remove('invalid');
+                    }
+                } else {
+                    field.classList.remove('invalid');
+                }
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+
+    // Foco no primeiro campo ao carregar
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstInput = document.querySelector('input[type="text"]');
+        if (firstInput) {
+            firstInput.focus();
+        }
+    });
+</script>
+</body>
+</html>

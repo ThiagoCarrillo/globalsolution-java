@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="#{app.title}">Home | Sistema de Gerenciamento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        :root {
+            --primary-color: #4285F4;
+            --secondary-color: #34A853;
+            --accent-color: #FBBC05;
+            --danger-color: #EA4335;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333;
+            --ia-color: #8E44AD; /* Nova cor para o botão de IA */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1e5799 0%, #207cca 51%, #2989d8 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .home-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+            text-align: center;
+            position: relative;
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .lang-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .lang-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .lang-btn.active {
+            background-color: var(--accent-color);
+            color: var(--dark-gray);
+            font-weight: 500;
+            border-color: var(--accent-color);
+        }
+
+        .home-header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+        }
+
+        .home-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
+        }
+
+        .home-header h1 {
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .home-header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .home-body {
+            padding: 30px; /* Reduzido para caber mais botões */
+            position: relative;
+        }
+
+        .instruction {
+            color: #555;
+            margin: 15px 0;
+            font-size: 15px;
+        }
+
+        .nav-btn {
+            display: block;
+            text-decoration: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn i {
+            margin-right: 8px;
+        }
+
+        /* Cores específicas para cada botão */
+        .btn-guarda {
+            background-color: var(--primary-color);
+        }
+
+        .btn-guarda:hover {
+            background-color: #357ae8;
+        }
+
+        .btn-rota {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-rota:hover {
+            background-color: #2d8c4e;
+        }
+
+        .btn-ia {
+            background-color: var(--ia-color);
+        }
+
+        .btn-ia:hover {
+            background-color: #7D3C98;
+        }
+
+        .home-footer {
+            padding: 20px;
+            background-color: var(--light-gray);
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 480px) {
+            .home-container {
+                max-width: 100%;
+            }
+
+            .home-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="home-container">
+    <!-- Seletor de idioma -->
+    <div class="language-selector">
+        <a href="?lang=pt" class="lang-btn" th:classappend="${#locale.language == 'pt'} ? 'active' : ''">PT</a>
+        <a href="?lang=en" class="lang-btn" th:classappend="${#locale.language == 'en'} ? 'active' : ''">EN</a>
+    </div>
+
+    <div class="home-header">
+        <h1 th:text="#{app.title}">Sistema de Gerenciamento</h1>
+        <p th:text="#{app.welcome}">Selecione uma opção abaixo</p>
+    </div>
+
+    <div class="home-body">
+        <div class="instruction">
+            <p th:text="#{app.instruction}">Escolha o cadastro que deseja acessar:</p>
+        </div>
+
+        <a class="nav-btn btn-guarda" th:href="@{/api/guarda/listar}">
+            <i class="fas fa-user-shield"></i>
+            <span th:text="#{app.guarda_civil}">Guarda Civil</span>
+        </a>
+
+        <a class="nav-btn btn-rota" th:href="@{/api/rotasegura/listar}">
+            <i class="fas fa-route"></i>
+            <span th:text="#{app.safe_route}">Rota Segura</span>
+        </a>
+
+        <!-- Novo botão para Assistência com IA -->
+        <a class="nav-btn btn-ia" th:href="@{/ai-chat}">
+            <i class="fas fa-robot"></i>
+            <span th:text="#{app.ia_assistance}">Assistência com IA</span>
+        </a>
+    </div>
+
+    <div class="home-footer" th:text="#{app.footer}">
+        &copy; 2025 Sistema de Gerenciamento. Todos os direitos reservados.
+    </div>
+</div>
+</body>
+</html>

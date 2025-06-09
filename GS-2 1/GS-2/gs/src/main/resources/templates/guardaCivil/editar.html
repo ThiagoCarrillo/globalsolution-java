@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{app.edit_message} + ' | ' + #{app.title}">Editar Mensagem | Guarda Civil</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a3a6c;
+            --secondary-color: #2d5a9d;
+            --accent-color: #ffcc00;
+            --light-color: #f0f4f8;
+            --dark-color: #0c1e3e;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+            --card-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a3a6c 0%, #2d5a9d 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--dark-color) 0%, var(--primary-color) 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 20px 20px 0 0;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(25deg);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .brand-icon i {
+            color: var(--dark-color);
+            font-size: 28px;
+        }
+
+        .brand-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-text span {
+            color: var(--accent-color);
+        }
+
+        .header-title {
+            margin-top: 10px;
+        }
+
+        .header-title h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 30px;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            border: none;
+            box-shadow: var(--shadow-light);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #ffb300 100%);
+            color: var(--dark-color);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 179, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(26, 58, 108, 0.3);
+        }
+
+        .btn i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        /* Form Container */
+        .form-container {
+            background-color: white;
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow-medium);
+            overflow: hidden;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--light-color) 0%, #e6ebf5 100%);
+            padding: 25px 30px;
+            border-bottom: 1px solid #e0e6ed;
+        }
+
+        .form-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 15px;
+            text-align: center;
+        }
+
+        .form-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .info-badge {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #ffb300 100%);
+            color: var(--dark-color);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: var(--shadow-light);
+            display: inline-flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .info-badge i {
+            margin-right: 8px;
+        }
+
+        /* Form Content */
+        .form-content {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--dark-color);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group label i {
+            margin-right: 10px;
+            width: 20px;
+            color: var(--secondary-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: var(--transition);
+            background-color: white;
+            font-family: 'Roboto', sans-serif;
+            box-shadow: var(--shadow-light);
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(45, 90, 157, 0.2);
+            outline: none;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .form-actions .btn {
+            min-width: 240px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            font-size: 15px;
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .brand-section {
+                margin-bottom: 20px;
+            }
+
+            .actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-content {
+                padding: 25px;
+            }
+
+            .form-title {
+                font-size: 24px;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .header {
+                border-radius: 16px 16px 0 0;
+                padding: 30px 20px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .form-content {
+                padding: 20px;
+            }
+
+            .form-header {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="brand-section">
+                <div class="brand-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                    <div class="brand-text" th:text="#{app.name}">GUARDA <span>CIVIL</span></div>
+                    <div class="header-title">
+                        <h1 th:text="#{app.edit_message}">Editar Mensagem</h1>
+                        <p th:text="#{app.slogan}">Atualize as informações da mensagem selecionada</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a th:href="@{/api/guarda/lista}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> <span th:text="#{app.back_to_list}">Voltar para Lista</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+        <div class="form-header">
+            <h2 class="form-title">Editar Mensagem</h2>
+            <div class="info-badge">
+                <i class="fas fa-edit"></i> <span th:text="#{app.edit_message} + ' #' + ${GuardaCivilDTO.id}">Editando mensagem #</span>
+            </div>
+        </div>
+
+        <div class="form-content">
+            <form th:action="@{/api/guarda/cadastrar}" th:object="${GuardaCivilDTO}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> <span th:text="#{app.email}">E-mail</span></label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}"
+                           placeholder="seu.email@exemplo.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="mensagem"><i class="fas fa-comment-dots"></i> <span th:text="#{app.message}">Mensagem</span></label>
+                    <textarea class="form-control" id="mensagem" th:field="*{mensagem}"
+                              placeholder="Digite sua mensagem para a Guarda Civil..."
+                              required></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> <span th:text="#{app.save}">Atualizar Mensagem</span>
+                    </button>
+
+                    <a th:href="@{/api/guarda/listar}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> <span th:text="#{app.cancel}">Cancelar Edição</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer" th:text="#{app.footer}">
+        &copy; 2025 Sistema de Comunicação da Guarda Civil. Todos os direitos reservados.
+    </div>
+</div>
+
+<script>
+    // Validação do formulário
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const email = document.getElementById('email').value;
+        const mensagem = document.getElementById('mensagem').value;
+
+        if (!email || !mensagem) {
+            e.preventDefault();
+            alert('Por favor, preencha todos os campos obrigatórios.');
+        }
+    });
+
+    // Animação ao rolar
+    document.addEventListener('DOMContentLoaded', function() {
+        const formContainer = document.querySelector('.form-container');
+        formContainer.style.opacity = '0';
+        formContainer.style.transform = 'translateY(20px)';
+        formContainer.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+        setTimeout(() => {
+            formContainer.style.opacity = '1';
+            formContainer.style.transform = 'translateY(0)';
+        }, 100);
+    });
+    // Validação do formulário com i18n
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const email = document.getElementById('email');
+        const mensagem = document.getElementById('mensagem');
+        let hasError = false;
+
+        if (!email.value) {
+            alert(email.getAttribute('data-error'));
+            hasError = true;
+        }
+
+        if (!mensagem.value) {
+            alert(mensagem.getAttribute('data-error'));
+            hasError = true;
+        }
+
+        if (hasError) {
+            e.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>

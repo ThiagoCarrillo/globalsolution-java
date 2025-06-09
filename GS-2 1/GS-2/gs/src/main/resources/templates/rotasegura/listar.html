@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{app.safe_routes} + ' | ' + #{app.title}">Rotas Seguras | Sistema de Gerenciamento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4285F4;
+            --secondary-color: #34A853;
+            --accent-color: #FBBC05;
+            --danger-color: #EA4335;
+            --light-gray: #f5f7fa;
+            --dark-gray: #2d3748;
+            --text-color: #4a5568;
+            --border-color: #e2e8f0;
+            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --card-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1e5799 0%, #207cca 51%, #2989d8 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3f51b5 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: var(--card-radius) var(--card-radius) 0 0;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+            box-shadow: var(--shadow-light);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #2E7D32 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(52, 168, 83, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3f51b5 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(66, 133, 244, 0.4);
+        }
+
+        .btn i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .search-container {
+            background-color: white;
+            border-radius: var(--card-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-medium);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+            outline: none;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-color);
+            font-size: 20px;
+        }
+
+        .filter-select {
+            min-width: 200px;
+        }
+
+        .filter-select select {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: white;
+            box-shadow: var(--shadow-light);
+            cursor: pointer;
+        }
+
+        .filter-select select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+            outline: none;
+        }
+
+        .routes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .route-card {
+            background-color: white;
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .route-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3f51b5 100%);
+            color: white;
+            padding: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h3 i {
+            font-size: 22px;
+        }
+
+        .card-id {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .card-body {
+            padding: 25px;
+            flex-grow: 1;
+        }
+
+        .route-info {
+            display: grid;
+            grid-template-columns: 30px 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .route-info i {
+            color: var(--primary-color);
+            font-size: 20px;
+            margin-top: 3px;
+        }
+
+        .route-info div {
+            line-height: 1.6;
+        }
+
+        .route-info .label {
+            font-weight: 500;
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        .route-info .value {
+            font-size: 16px;
+        }
+
+        .card-actions {
+            padding: 0 25px 25px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+        }
+
+        .edit-btn {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #FFA000 100%);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            box-shadow: 0 4px 10px rgba(251, 188, 5, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #C62828 100%);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            box-shadow: 0 4px 10px rgba(234, 67, 53, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .no-routes {
+            grid-column: 1 / -1;
+            background-color: white;
+            border-radius: var(--card-radius);
+            padding: 50px 30px;
+            text-align: center;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .no-routes i {
+            font-size: 60px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        .no-routes h2 {
+            font-size: 24px;
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+        }
+
+        .no-routes p {
+            font-size: 17px;
+            color: var(--text-color);
+            margin-bottom: 25px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: white;
+            font-size: 15px;
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .route-card {
+            animation: fadeIn 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        /* Delay para animação em cascata */
+        .route-card:nth-child(1) { animation-delay: 0.1s; }
+        .route-card:nth-child(2) { animation-delay: 0.2s; }
+        .route-card:nth-child(3) { animation-delay: 0.3s; }
+        .route-card:nth-child(4) { animation-delay: 0.4s; }
+        .route-card:nth-child(5) { animation-delay: 0.5s; }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .routes-container {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .search-box, .filter-select {
+                min-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                background: white;
+            }
+
+            .header {
+                border-radius: 12px 12px 0 0;
+            }
+
+            .routes-container {
+                grid-template-columns: 1fr;
+            }
+
+            .route-card {
+                border-radius: 12px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1><i class="fas fa-route"></i> <span th:text="#{app.safe_routes}">Rotas Seguras</span></h1>
+                <p th:text="#{app.safe_routes_description}">Gerencie todas as rotas seguras cadastradas no sistema</p>
+            </div>
+            <div class="actions">
+                <a th:href="@{/api/rotasegura/cadastrar}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle"></i> <span th:text="#{app.new_route}">Nova Rota</span>
+                </a>
+                <a th:href="@{/home}" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> <span th:text="#{app.back_to_home}">Voltar para Home</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" th:placeholder="#{app.search_route}" placeholder="Pesquisar rotas...">
+        </div>
+        <div class="filter-select">
+            <select>
+                <option th:text="#{app.all_routes}">Todas as rotas</option>
+                <option th:text="#{app.active_routes}">Rotas ativas</option>
+                <option th:text="#{app.recent_routes}">Rotas recentes</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="routes-container">
+        <!-- Card para cada rota -->
+        <div class="route-card" th:each="rota : ${listaRotaSegura}">
+            <div class="card-header">
+                <h3><i class="fas fa-map-marker-alt"></i> <span th:text="${rota.logradouro}"></span></h3>
+                <div class="card-id">ID: <span th:text="${rota.id}"></span></div>
+            </div>
+
+            <div class="card-body">
+                <div class="route-info">
+                    <i class="fas fa-map-pin"></i>
+                    <div>
+                        <div class="label" th:text="#{app.district}">Bairro</div>
+                        <div class="value" th:text="${rota.bairro}"></div>
+                    </div>
+                </div>
+
+                <div class="route-info">
+                    <i class="fas fa-location-dot"></i>
+                    <div>
+                        <div class="label" th:text="#{app.address}">Endereço</div>
+                        <div class="value">
+                            <span th:text="${rota.logradouro} + ', ' + ${rota.numero}"></span>
+                            <div th:if="${rota.complemento}" th:text="${rota.complemento}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="route-info">
+                    <i class="fas fa-city"></i>
+                    <div>
+                        <div class="label" th:text="#{app.city_uf}">Cidade/UF</div>
+                        <div class="value" th:text="${rota.cidade} + '/' + ${rota.uf}"></div>
+                    </div>
+                </div>
+
+                <div class="route-info">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <div class="label" th:text="#{app.zipcode}">CEP</div>
+                        <div class="value" th:text="${rota.cep}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <a th:href="@{/api/rotasegura/editar/{id}(id=${rota.id})}" class="action-btn edit-btn">
+                    <i class="fas fa-edit"></i> <span th:text="#{app.edit}">Editar</span>
+                </a>
+                <form th:action="@{/api/rotasegura/{id}(id=${rota.id})}"
+                      th:attr="onsubmit='return confirm(\'' + #{app.confirm_delete_route} + ' ' + #{app.confirm_delete_route_description} + '\');'">
+                    <button type="submit" class="action-btn delete-btn">
+                        <i class="fas fa-trash"></i> <span th:text="#{app.delete}">Excluir</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Mensagem quando não há rotas -->
+        <div class="no-routes" th:if="${listaRotaSegura.isEmpty()}">
+            <i class="fas fa-route"></i>
+            <h2 th:text="#{app.no_routes}">Nenhuma rota segura cadastrada</h2>
+            <p th:text="#{app.no_routes_description}">Você ainda não cadastrou nenhuma rota segura. Clique no botão abaixo para criar a primeira rota.</p>
+            <a th:href="@{/api/rotasegura/cadastrar}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> <span th:text="#{app.first_route}">Cadastrar Primeira Rota</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer" th:text="#{app.footer_system}">
+        &copy; 2025 Sistema de Gerenciamento. Todos os direitos reservados.
+    </div>
+</div>
+
+<script>
+    // Funcionalidade de pesquisa
+    document.querySelector('.search-box input').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.route-card');
+
+        cards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+
+    // Confirmação de exclusão aprimorada
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const confirmMessage = this.closest('form').getAttribute('onsubmit').split("'")[1];
+            if (!confirm(confirmMessage)) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Animações ao rolar a página
+    document.addEventListener('DOMContentLoaded', function() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.route-card').forEach(card => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    });
+</script>
+</body>
+</html>

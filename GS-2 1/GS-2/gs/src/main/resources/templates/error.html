@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Erro</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-danger">Ocorreu um erro</h1>
+    <hr/>
+
+    <!-- Exibe o status e a mensagem de erro -->
+    <p>
+        <strong>Status:</strong>
+        <span th:text="${status}">500</span>
+        &nbsp;–&nbsp;
+        <span th:text="${error}">Internal Server Error</span>
+    </p>
+
+    <!-- Exibe, se existir, a mensagem mais detalhada -->
+    <p th:if="${message}">
+        <strong>Mensagem:</strong>
+        <span th:text="${message}">Descrição do problema aqui.</span>
+    </p>
+
+    <!-- Exibe o caminho que causou o erro -->
+    <p>
+        <strong>Caminho:</strong>
+        <span th:text="${path}">/url/que/causou/erro</span>
+    </p>
+
+    <!-- Data/hora em que ocorreu o erro -->
+    <p>
+        <strong>Timestamp:</strong>
+        <span th:text="${#dates.format(timestamp, 'dd/MM/yyyy HH:mm:ss')}">
+      01/01/2022 12:00:00
+    </span>
+    </p>
+
+    <hr/>
+    <a th:href="@{/}" class="btn btn-secondary">Voltar para Home</a>
+</div>
+</body>
+</html>

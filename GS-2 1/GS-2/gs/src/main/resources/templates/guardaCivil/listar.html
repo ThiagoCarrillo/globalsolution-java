@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{app.messages} + ' | ' + #{app.title}">Mensagens | Guarda Civil</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a3a6c;
+            --secondary-color: #2d5a9d;
+            --accent-color: #ffcc00;
+            --light-color: #f0f4f8;
+            --dark-color: #0c1e3e;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a3a6c 0%, #2d5a9d 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--dark-color) 0%, var(--primary-color) 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 20px 20px 0 0;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(25deg);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .brand-icon i {
+            color: var(--dark-color);
+            font-size: 28px;
+        }
+
+        .brand-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-text span {
+            color: var(--accent-color);
+        }
+
+        .header-title {
+            margin-top: 10px;
+        }
+
+        .header-title h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 30px;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            border: none;
+            box-shadow: var(--shadow-light);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #ffb300 100%);
+            color: var(--dark-color);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 179, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(26, 58, 108, 0.3);
+        }
+
+        .btn i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        /* Search and Filter */
+        .search-container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-medium);
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 16px 20px 16px 60px;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-light);
+        }
+
+        .search-box input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(45, 90, 157, 0.2);
+            outline: none;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dark);
+            font-size: 22px;
+        }
+
+        .filter-select {
+            min-width: 200px;
+        }
+
+        .filter-select select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            font-size: 16px;
+            background-color: white;
+            box-shadow: var(--shadow-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-select select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(45, 90, 157, 0.2);
+            outline: none;
+        }
+
+        /* Messages Container */
+        .messages-container {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-medium);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .messages-header {
+            display: grid;
+            grid-template-columns: 100px 1fr 2fr 150px;
+            gap: 20px;
+            padding: 20px 30px;
+            background-color: var(--light-color);
+            font-weight: 600;
+            border-bottom: 1px solid #e0e6ed;
+        }
+
+        .messages-header div {
+            padding: 10px;
+            color: var(--primary-color);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .message-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 2fr 150px;
+            gap: 20px;
+            padding: 25px 30px;
+            border-bottom: 1px solid #e0e6ed;
+            transition: var(--transition);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .message-row:last-child {
+            border-bottom: none;
+        }
+
+        .message-row:hover {
+            background-color: rgba(26, 58, 108, 0.03);
+            transform: translateX(5px);
+        }
+
+        .message-id {
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .message-email {
+            color: var(--secondary-color);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            word-break: break-word;
+        }
+
+        .message-content {
+            display: flex;
+            align-items: center;
+            line-height: 1.5;
+            color: var(--text-dark);
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            border: none;
+            font-size: 16px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .edit-btn {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #ffb300 100%);
+            color: var(--dark-color);
+        }
+
+        .edit-btn:hover {
+            box-shadow: 0 4px 10px rgba(255, 179, 0, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #c62828 100%);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            box-shadow: 0 4px 10px rgba(234, 67, 53, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .no-messages {
+            padding: 50px 30px;
+            text-align: center;
+        }
+
+        .no-messages i {
+            font-size: 60px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        .no-messages h2 {
+            font-size: 24px;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .no-messages p {
+            font-size: 17px;
+            color: var(--text-color);
+            margin-bottom: 25px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-light);
+            font-weight: 500;
+        }
+
+        .page-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .page-btn:hover:not(.active) {
+            background-color: var(--light-color);
+            transform: translateY(-3px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            font-size: 15px;
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-row {
+            animation: fadeIn 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        /* Delay para animação em cascata */
+        .message-row:nth-child(1) { animation-delay: 0.1s; }
+        .message-row:nth-child(2) { animation-delay: 0.2s; }
+        .message-row:nth-child(3) { animation-delay: 0.3s; }
+        .message-row:nth-child(4) { animation-delay: 0.4s; }
+        .message-row:nth-child(5) { animation-delay: 0.5s; }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .messages-header, .message-row {
+                grid-template-columns: 80px 1fr 2fr 100px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .brand-section {
+                margin-bottom: 20px;
+            }
+
+            .actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .search-box, .filter-select {
+                min-width: 100%;
+            }
+
+            .messages-header {
+                display: none;
+            }
+
+            .message-row {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .message-actions {
+                margin-top: 15px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .header {
+                border-radius: 16px 16px 0 0;
+                padding: 30px 20px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="brand-section">
+                <div class="brand-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                    <div class="brand-text" th:text="#{app.name}">GUARDA <span>CIVIL</span></div>
+                    <div class="header-title">
+                        <h1 th:text="#{app.messages}">Lista de Mensagens</h1>
+                        <p th:text="#{app.slogan}">Gerencie todas as mensagens enviadas à Guarda Civil</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a th:href="@{/api/guarda/cadastrar}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> <span th:text="#{app.new_message}">Nova Mensagem</span>
+                </a>
+                <a th:href="@{/home}" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> <span th:text="#{app.back_to_home}">Voltar para Home</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Pesquisar mensagens...">
+        </div>
+        <div class="filter-select">
+            <select id="filterSelect">
+                <option value="all" th:text="#{app.filter}">Todas as mensagens</option>
+                <option value="recent" th:text="#{app.recent}">Recentes</option>
+                <option value="priority" th:text="#{app.priority}">Prioritárias</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="messages-container">
+        <div class="messages-header">
+            <div th:text="#{app.message_id}">ID</div>
+            <div th:text="#{app.email}">E-mail</div>
+            <div th:text="#{app.message}">Mensagem</div>
+            <div th:text="#{app.actions}">Ações</div>
+        </div>
+
+        <div id="messagesList">
+            <div class="message-row" th:each="mensagem : ${listaGuardaCivil}">
+                <div class="message-id">#<span th:text="${mensagem.id}"></span></div>
+                <div class="message-email" th:text="${mensagem.email}"></div>
+                <div class="message-content" th:text="${mensagem.mensagem}"></div>
+                <div class="message-actions">
+                    <a th:href="@{/api/guarda/{id}/editar(id=${mensagem.id})}" class="action-btn edit-btn">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a th:href="@{/api/guarda/{id}(id=${mensagem.id})}" class="action-btn delete-btn"
+                       th:attr="onclick='return confirm(\'' + #{app.confirm_delete} + ' ' + #{app.confirm_delete_description} + '\');'">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- Mensagem quando não há mensagens -->
+            <div class="no-messages" th:if="${#lists.isEmpty(listaGuardaCivil)}">
+                <i class="fas fa-envelope-open"></i>
+                <h2 th:text="#{app.no_messages}">Nenhuma mensagem encontrada</h2>
+                <p th:text="#{app.no_messages_description}">Você ainda não possui mensagens cadastradas. Clique no botão abaixo para criar sua primeira mensagem.</p>
+                <a th:href="@{/api/guarda/cadastrar}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> <span th:text="#{app.create_first_message}">Criar Primeira Mensagem</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paginação -->
+    <div class="pagination">
+        <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <div class="footer" th:text="#{app.footer}">
+        &copy; 2025 Sistema de Comunicação da Guarda Civil. Todos os direitos reservados.
+    </div>
+</div>
+
+<script>
+    // Funcionalidade de pesquisa
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('.message-row');
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+                row.style.display = 'grid';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Confirmação de exclusão
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (!confirm('Tem certeza que deseja excluir esta mensagem? Esta ação não pode ser desfeita.')) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Animação ao rolar a página
+    document.addEventListener('DOMContentLoaded', function() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.message-row').forEach(row => {
+            row.style.opacity = 0;
+            row.style.transform = 'translateY(20px)';
+            row.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(row);
+        });
+    });
+
+    // Atualizar a confirmação de exclusão para usar i18n
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (!confirm(document.querySelector('[th\\:attr]').getAttribute('th:attr').split("'")[3])) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+</body>
+</html>

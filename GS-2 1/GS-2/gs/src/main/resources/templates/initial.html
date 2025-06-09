@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Sistema de Gerenciamento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4285F4;
+            --secondary-color: #34A853;
+            --accent-color: #FBBC05;
+            --danger-color: #EA4335;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1e5799 0%, #207cca 51%, #2989d8 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+            text-align: center; /* Centraliza todo o conteúdo */
+        }
+
+        .login-header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .login-body {
+            padding: 40px 30px; /* Mais espaço ao redor */
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--dark-gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 25px 0; /* Espaçamento maior */
+        }
+
+        .google-btn:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+
+        .google-btn i {
+            color: var(--primary-color);
+            font-size: 20px;
+            margin-right: 12px;
+        }
+
+        .login-footer {
+            padding: 20px;
+            background-color: var(--light-gray);
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            background-color: #fce4e2;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .instruction {
+            color: #555;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                max-width: 100%;
+            }
+
+            .login-body {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-header">
+        <h1>Bem-vindo</h1>
+        <p>Faça login com sua conta Google</p> <!-- Texto atualizado -->
+    </div>
+
+    <div class="login-body">
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="errorText">Ocorreu um erro durante o login. Tente novamente.</span>
+        </div>
+
+        <!-- Aviso sobre login exclusivo -->
+        <div class="instruction">
+            <p>Este sistema utiliza autenticação exclusiva via Google</p>
+        </div>
+
+        <!-- Botão de Login com Google (ÚNICA OPÇÃO) -->
+        <a class="google-btn" th:href="@{/oauth2/authorization/google}">
+            <i class="fab fa-google"></i>
+            Entrar com Google
+        </a>
+
+        <!-- Removido: Divider, formulário tradicional e links extras -->
+    </div>
+
+    <div class="login-footer">
+        &copy; 2025 Sistema de Gerenciamento. Todos os direitos reservados.
+    </div>
+</div>
+
+<script>
+    // Tratamento de erros apenas para OAuth
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorParam = urlParams.get('error');
+    const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+
+    if (errorParam) {
+        errorMessage.classList.add('show');
+
+        // Mensagens específicas para erros OAuth
+        if (errorParam === 'oauth') {
+            errorText.textContent = 'Falha na autenticação com o Google. Tente novamente.';
+        } else if (errorParam === 'access_denied') {
+            errorText.textContent = 'Acesso negado. Entre em contato com o administrador.';
+        } else {
+            errorText.textContent = 'Erro durante o login. Tente novamente ou contate o suporte.';
+        }
+    }
+</script>
+</body>
+</html>
