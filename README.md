@@ -36,6 +36,6 @@ Este projeto tem como objetivo a construção de uma aplicação web utilizando 
 - **Maven** para gerenciamento de dependências
 
 ## Grupo
-**Igor Oviedo RM553434**
-**Cauã Loureiro RM553093**
-**Thiago Carrillo RM553565**
+### **Igor Oviedo RM553434**
+### **Cauã Loureiro RM553093**
+### **Thiago Carrillo RM553565**
